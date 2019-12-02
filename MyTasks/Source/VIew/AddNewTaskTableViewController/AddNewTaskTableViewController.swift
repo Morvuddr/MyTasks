@@ -1,0 +1,155 @@
+//
+//  AddNewTaskTableViewController.swift
+//  MyTasks
+//
+//  Created by Игорь Бопп on 01.12.2019.
+//  Copyright © 2019 igor.bopp. All rights reserved.
+//
+
+import UIKit
+import RxSwift
+import RxCocoa
+
+class AddNewTaskViewController: UITableViewController {
+
+    // MARK: - Properties
+
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var descriptionTextView: UITextView!
+    @IBOutlet var priorityButtons: [UIButton]! {
+        didSet {
+            priorityButtons.forEach({ $0.layer.cornerRadius = $0.bounds.width / 2 })
+        }
+    }
+    @IBOutlet weak var actionButton: UIButton! {
+        didSet {
+            actionButton.setupViews(cornerRadius: 8)
+        }
+    }
+
+    private var viewModel: AddNewTaskViewModel!
+    private let bag = DisposeBag()
+
+    // MARK: - Methods
+
+    static func create(with viewModel: AddNewTaskViewModel) -> AddNewTaskViewController {
+         let controller = AddNewTaskViewController.getInstance() as! AddNewTaskViewController
+         controller.viewModel = viewModel
+         return controller
+     }
+
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupViews(with: viewModel)
+        bindTextFields(to: viewModel)
+        bindButton(to: viewModel)
+
+
+        viewModel.isEditing.subscribe(onNext: { [weak self] status in
+            let title = status ? "ИЗМЕНИТЬ" : "СОЗДАТЬ"
+            self?.actionButton.setTitle(title, for: .normal)
+        }, onCompleted: { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }).disposed(by: bag)
+
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
+    }
+
+    private func setupViews(with viewModel: AddNewTaskViewModel) {
+        nameTextField.text = viewModel.nameSubject.value
+        nameTextField.delegate = self
+        descriptionTextView.text = viewModel.descriptionSubject.value
+        descriptionTextView.delegate = self
+        descriptionTextView.placeholder = "Введите текст"
+        priorityButtons.forEach({ $0.setTitle("", for: .normal) })
+        priorityButtons.first(where: { $0.tag == viewModel.prioritySubject.value.rawValue })?.setTitle("✓", for: .normal)
+    }
+
+    private func bindTextFields(to viewModel: AddNewTaskViewModel) {
+        nameTextField.rx.text.orEmpty.bind(to: viewModel.nameSubject).disposed(by: bag)
+        descriptionTextView.rx.text.orEmpty.bind(to: viewModel.descriptionSubject).disposed(by: bag)
+    }
+
+    private func bindButton(to viewModel: AddNewTaskViewModel) {
+        viewModel.actionButtonIsEnabled.subscribe(onNext: { [weak self] status in
+            self?.actionButton.isEnabled = status
+            }).disposed(by: bag)
+        actionButton.rx.tap.subscribe(onNext: { _ in
+            viewModel.save()
+            }).disposed(by: bag)
+    }
+
+    @IBAction func prioritySelected(_ sender: UIButton) {
+        priorityButtons.forEach({ $0.setTitle("", for: .normal) })
+        sender.setTitle("✓", for: .normal)
+        viewModel.prioritySubject.accept(TaskPriority(rawValue: sender.tag) ?? .low)
+    }
+
+    @IBAction func closeButtonPressed(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
+
+    // MARK: - Table view data source
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 4
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.row == 1 {
+            return descriptionTextView.text.heightWithConstrainedWidth(width: tableView.frame.width - 32, font: UIFont.systemFont(ofSize: 14)) + 30
+        }
+        return super.tableView(tableView, heightForRowAt: indexPath)
+    }
+
+}
+
+extension AddNewTaskViewController: UITextFieldDelegate {
+
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+        let maxLength = 20
+        let oldText = textField.text!
+        let stringRange = Range(range, in:oldText)!
+        let newText = oldText.replacingCharacters(in: stringRange, with: string)
+
+        return newText.count <= maxLength
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+    }
+
+}
+
+extension AddNewTaskViewController: UITextViewDelegate {
+
+    func textViewDidChange(_ textView: UITextView) {
+        textView.changePlaceholderVisibility()
+        DispatchQueue.main.async {
+            self.tableView.beginUpdates()
+            self.tableView.endUpdates()
+        }
+    }
+
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let maxLength = 200
+        let oldText = textView.text!
+        let stringRange = Range(range, in:oldText)!
+        let newText = oldText.replacingCharacters(in: stringRange, with: text)
+
+        return newText.count <= maxLength
+    }
+
+}
