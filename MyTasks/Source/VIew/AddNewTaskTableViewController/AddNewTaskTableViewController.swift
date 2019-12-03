@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import UserNotifications
 
 class AddNewTaskViewController: UITableViewController {
 
@@ -76,8 +77,7 @@ class AddNewTaskViewController: UITableViewController {
         priorityButtons.first(where: { $0.tag == viewModel.prioritySubject.value.rawValue })?.setTitle("✓", for: .normal)
         viewModel.dateSubject
             .map({ (date) -> String in
-                let remindDate = getRemindDate(from: date)
-                return createStringFromDate(remindDate)
+                return createStringFromDate(date)
             }).subscribe(onNext: { [weak self] dateStr in
                 self?.dueDateLabel.text = dateStr
             }).disposed(by: bag)

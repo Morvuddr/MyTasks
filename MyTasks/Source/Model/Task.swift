@@ -43,7 +43,7 @@ class Task: Object, IdentifiableType {
         self.shortDescription = description
         self.priority = priority
         self.shouldRemind = shouldRemind
-        self.date = getRemindDate(from: date)
+        self.date = date
         self.checked = checked
     }
 }

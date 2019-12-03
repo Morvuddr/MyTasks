@@ -32,6 +32,7 @@ class AddNewTaskViewModel {
         self.dataStore = dataStore
         self.taskID = taskID
 
+        dateSubject.accept(getRemindDate(from: Date()))
         if let taskID = taskID, let task = dataStore.getTask(by: taskID) {
             nameSubject.accept(task.name)
             descriptionSubject.accept(task.shortDescription)

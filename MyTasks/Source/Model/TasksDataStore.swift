@@ -28,10 +28,11 @@ class TasksDataStore {
     }
 
     func add(task: Task) {
-        print(task.description)
+        
         do {
             try realm.write {
                 realm.add(task, update: .modified)
+                scheduleNotification(for: task)
             }
         } catch (let error){
             print(error.localizedDescription)
@@ -44,6 +45,7 @@ class TasksDataStore {
             guard let deletingTask = realm.object(ofType: Task.self, forPrimaryKey: taskID) else { return }
             try realm.write {
                 realm.delete(deletingTask)
+                removeNotification(for: taskID)
             }
         } catch (let error){
             print(error.localizedDescription)

@@ -274,7 +274,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="217"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="30" translatesAutoresizingMaskIntoConstraints="NO" id="TPT-fn-5Bc">
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="TPT-fn-5Bc">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="217"/>
                                 <locale key="locale" localeIdentifier="ru_RU"/>
                             </datePicker>

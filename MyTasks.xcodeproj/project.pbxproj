@@ -19,6 +19,7 @@
 		CF389338239456AD0015BBA5 /* AddNewTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF389337239456AD0015BBA5 /* AddNewTaskViewModel.swift */; };
 		CF38933D239477F40015BBA5 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38933C239477F40015BBA5 /* StringExtension.swift */; };
 		CF3C65F6239552A900ABC6A4 /* TextViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3C65F5239552A900ABC6A4 /* TextViewExtension.swift */; };
+		CF3C65F82395CB8E00ABC6A4 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3C65F72395CB8E00ABC6A4 /* Helpers.swift */; };
 		CF74B3512393AADF00812343 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF74B3502393AADF00812343 /* AppDelegate.swift */; };
 		CF74B3552393AADF00812343 /* TasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF74B3542393AADF00812343 /* TasksViewController.swift */; };
 		CF74B3582393AADF00812343 /* TasksViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF74B3562393AADF00812343 /* TasksViewController.storyboard */; };
@@ -47,6 +48,7 @@
 		CF389337239456AD0015BBA5 /* AddNewTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTaskViewModel.swift; sourceTree = "<group>"; };
 		CF38933C239477F40015BBA5 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		CF3C65F5239552A900ABC6A4 /* TextViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtension.swift; sourceTree = "<group>"; };
+		CF3C65F72395CB8E00ABC6A4 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		CF74B34D2393AADF00812343 /* MyTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF74B3502393AADF00812343 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CF74B3542393AADF00812343 /* TasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksViewController.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				CF1AB8CE239429A1004612B5 /* UIButtonExtension.swift */,
 				CF38933C239477F40015BBA5 /* StringExtension.swift */,
 				CF3C65F5239552A900ABC6A4 /* TextViewExtension.swift */,
+				CF3C65F72395CB8E00ABC6A4 /* Helpers.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				CF74B3512393AADF00812343 /* AppDelegate.swift in Sources */,
 				CF74B3722393BA5A00812343 /* UIViewControllerExtension.swift in Sources */,
 				CF74B36C2393B7CE00812343 /* TasksViewModel.swift in Sources */,
+				CF3C65F82395CB8E00ABC6A4 /* Helpers.swift in Sources */,
 				CF1AB8D123942FFE004612B5 /* AddNewTaskTableViewController.swift in Sources */,
 				CF1AB8CF239429A1004612B5 /* UIButtonExtension.swift in Sources */,
 				CF3C65F6239552A900ABC6A4 /* TextViewExtension.swift in Sources */,

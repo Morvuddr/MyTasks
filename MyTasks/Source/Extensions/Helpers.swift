@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 // MARK: - Returns the date in string format
 
@@ -24,12 +25,42 @@ func createStringFromDate(_ date: Date) -> String {
 func getRemindDate(from now: Date) -> Date {
     var dateComponent = DateComponents()
     dateComponent.day = 1
-    let calendar = Calendar.current
+    let calendar = Calendar(identifier: .gregorian)
     let hour = calendar.component(.hour, from: now)
     let minute = calendar.component(.minute, from: now)
     let floorDate = calendar.date(bySettingHour: hour,
-                                          minute: minute - (minute % 30),
-                                          second: 0,
-                                          of: now)!
+                                  minute: minute - (minute % 5),
+                                  second: 0,
+                                  of: now)!
     return (calendar.date(byAdding: dateComponent, to: floorDate))!
+}
+
+func scheduleNotification(for task: Task) {
+    removeNotification(for: task.taskID)
+    let calendar = Calendar(identifier: .gregorian)
+    var hourComponent = DateComponents()
+    hourComponent.hour = -1
+    let remindDate = calendar.date(byAdding: hourComponent, to: task.date)
+
+    if let remindDate = remindDate, task.shouldRemind && remindDate > Date() {
+        let content = UNMutableNotificationContent()
+        content.title = "Скоро закончится срок у задачи:"
+        content.body = task.name
+        content.sound = UNNotificationSound.default
+
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: remindDate)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components,repeats: false)
+        let request = UNNotificationRequest(identifier: task.taskID, content: content, trigger: trigger)
+        let center = UNUserNotificationCenter.current()
+        center.add(request) { (error) in
+            if let error = error {
+                print("Error \(error.localizedDescription)")
+            }
+        }
+    }
+}
+
+func removeNotification(for notificationID: String) {
+    let center = UNUserNotificationCenter.current()
+    center.removePendingNotificationRequests(withIdentifiers: [notificationID])
 }
