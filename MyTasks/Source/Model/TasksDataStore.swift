@@ -18,8 +18,9 @@ class TasksDataStore {
                 Task(name: "Задача 2", description: "Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться.", priority: .medium),
                 Task(name: "Задача 3", description: "Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться. Lorem Ipsum используют потому, что тот обеспечивает более утонченный вкус и все такое", priority: .high)]
 
-    func getTasks() -> Observable<[Task]> {
-        return Observable.array(from: realm.objects(Task.self))
+    func getTasks() -> Observable<([Task], RealmChangeset?)> {
+        return Observable.arrayWithChangeset(from: realm.objects(Task.self))
+        //return Observable.array(from: realm.objects(Task.self))
         //return Observable.of(mock)
     }
 
@@ -46,6 +47,18 @@ class TasksDataStore {
             try realm.write {
                 realm.delete(deletingTask)
                 removeNotification(for: taskID)
+            }
+        } catch (let error){
+            print(error.localizedDescription)
+        }
+    }
+
+    func check(taskID: String) {
+        do {
+            guard let task = realm.object(ofType: Task.self, forPrimaryKey: taskID) else { return }
+            try realm.write {
+                task.checked = !task.checked
+                scheduleNotification(for: task)
             }
         } catch (let error){
             print(error.localizedDescription)

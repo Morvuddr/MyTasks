@@ -8,6 +8,7 @@
 
 import RxSwift
 import RxCocoa
+import RxRealm
 
 class TasksViewModel {
 
@@ -16,6 +17,8 @@ class TasksViewModel {
 
     public var tasks: Observable<[Task]> { return _tasks.asObservable() }
     private let _tasks = BehaviorRelay<[Task]>(value: [])
+    public var changeset: Observable<RealmChangeset?> { return _changeset.asObservable() }
+    private let _changeset = BehaviorRelay<RealmChangeset?>(value: nil)
 
     public let openAddNewTaskView = PublishSubject<String?>()
 
@@ -23,11 +26,18 @@ class TasksViewModel {
     // MARK: - Mathods
     init(dataStore: TasksDataStore, navigationControllerViewModel: NavigationControllerViewModel) {
         self.dataStore = dataStore
-        dataStore.getTasks()
-            .subscribe(onNext: { [weak self] tasks in
-                guard let sself = self else { return }
-                sself._tasks.accept(tasks)
-            }).disposed(by: bag)
+        let data = dataStore.getTasks().share()
+
+        data.subscribe(onNext: { [weak self] (tasks,_) in
+            guard let sself = self else { return }
+            sself._tasks.accept(tasks)
+        }).disposed(by: bag)
+
+        data.subscribe(onNext: { [weak self] (_,changeset) in
+            guard let sself = self else { return }
+            sself._changeset.accept(changeset)
+        }).disposed(by: bag)
+
 
         openAddNewTaskView.subscribe(onNext: { taskID in
             navigationControllerViewModel.navigateToAddNewTaskView(taskID: taskID)
@@ -36,6 +46,10 @@ class TasksViewModel {
 
     public func deleteTask(taskID: String) {
         dataStore.delete(taskID: taskID)
+    }
+
+    public func checkTask(by taskID: String) {
+        dataStore.check(taskID: taskID)
     }
 
 }

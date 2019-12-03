@@ -16,11 +16,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="DYG-kw-VUK">
-                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DYG-kw-VUK">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TaskTableViewCell" id="FtX-LF-g80" customClass="TaskTableViewCell" customModule="MyTasks" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TaskTableViewCell" id="FtX-LF-g80" customClass="TaskTableViewCell" customModule="MyTasks" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="103"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FtX-LF-g80" id="UsV-b1-v1i">
@@ -62,7 +62,7 @@
                                                         <constraint firstAttribute="bottom" secondItem="WWG-Zh-rx6" secondAttribute="bottom" constant="16" id="CVX-Ci-hO2"/>
                                                         <constraint firstItem="Jpd-2Y-BeS" firstAttribute="leading" secondItem="UNw-kL-Lh9" secondAttribute="trailing" constant="16" id="Gsm-57-pvR"/>
                                                         <constraint firstItem="Jpd-2Y-BeS" firstAttribute="top" secondItem="PpD-yW-7gR" secondAttribute="top" id="PMM-by-cIc"/>
-                                                        <constraint firstItem="WWG-Zh-rx6" firstAttribute="top" secondItem="UNw-kL-Lh9" secondAttribute="bottom" constant="8" id="b1C-TQ-43S"/>
+                                                        <constraint firstItem="WWG-Zh-rx6" firstAttribute="top" secondItem="UNw-kL-Lh9" secondAttribute="bottom" priority="999" constant="8" id="b1C-TQ-43S"/>
                                                         <constraint firstAttribute="trailing" secondItem="Jpd-2Y-BeS" secondAttribute="trailing" id="lj2-SM-bvk"/>
                                                         <constraint firstItem="UNw-kL-Lh9" firstAttribute="leading" secondItem="PpD-yW-7gR" secondAttribute="leading" constant="16" id="p97-Jz-gcQ"/>
                                                         <constraint firstItem="Jpd-2Y-BeS" firstAttribute="leading" secondItem="WWG-Zh-rx6" secondAttribute="trailing" constant="16" id="qdO-p9-6DH"/>
@@ -110,10 +110,10 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="DYG-kw-VUK" secondAttribute="trailing" id="4jc-8Q-2cA"/>
-                            <constraint firstItem="DYG-kw-VUK" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="AyQ-yn-ioW"/>
+                            <constraint firstAttribute="trailing" secondItem="DYG-kw-VUK" secondAttribute="trailing" id="4jc-8Q-2cA"/>
+                            <constraint firstItem="DYG-kw-VUK" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="AyQ-yn-ioW"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="bFz-y6-61e" secondAttribute="trailing" constant="16" id="Oqi-QR-a41"/>
-                            <constraint firstItem="DYG-kw-VUK" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="cmS-Qo-cYR"/>
+                            <constraint firstItem="DYG-kw-VUK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="cmS-Qo-cYR"/>
                             <constraint firstAttribute="bottom" secondItem="DYG-kw-VUK" secondAttribute="bottom" id="m8P-32-j9p"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="bFz-y6-61e" secondAttribute="bottom" constant="16" id="q1u-dZ-IBA"/>
                         </constraints>

@@ -201,6 +201,11 @@ class AddNewTaskViewController: UITableViewController {
         return super.tableView(tableView, indentationLevelForRowAt: newIndexPath)
     }
 
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        nameTextField.resignFirstResponder()
+        descriptionTextView.resignFirstResponder()
+    }
+
 }
 
 extension AddNewTaskViewController: UITextFieldDelegate {

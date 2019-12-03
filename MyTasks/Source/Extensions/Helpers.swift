@@ -42,7 +42,7 @@ func scheduleNotification(for task: Task) {
     hourComponent.hour = -1
     let remindDate = calendar.date(byAdding: hourComponent, to: task.date)
 
-    if let remindDate = remindDate, task.shouldRemind && remindDate > Date() {
+    if let remindDate = remindDate, task.shouldRemind && remindDate > Date() && !task.checked {
         let content = UNMutableNotificationContent()
         content.title = "Скоро закончится срок у задачи:"
         content.body = task.name

@@ -46,6 +46,8 @@ class TaskTableViewCell: UITableViewCell {
         case .high:
             priorityView.backgroundColor = .red
         }
+        backgroundTaskView.backgroundColor = task.checked ? .green : .white
+        priorityView.backgroundColor = task.checked ? .green : priorityView.backgroundColor
     }
 
 }
