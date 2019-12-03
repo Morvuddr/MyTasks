@@ -20,6 +20,9 @@ class Task: Object, IdentifiableType {
     @objc dynamic var name: String = ""
     @objc dynamic var shortDescription: String = ""
     @objc private dynamic var privatePriority: Int = TaskPriority.low.rawValue
+    @objc dynamic var shouldRemind: Bool = false
+    @objc dynamic var date: Date = Date()
+    @objc dynamic var checked: Bool = false
     var priority: TaskPriority {
         get { return TaskPriority(rawValue: privatePriority)! }
         set { privatePriority = newValue.rawValue }
@@ -33,11 +36,14 @@ class Task: Object, IdentifiableType {
         return taskID
     }
 
-    convenience init(id: String? = nil, name: String, description: String, priority: TaskPriority) {
+    convenience init(id: String? = nil, name: String, description: String, priority: TaskPriority, shouldRemind: Bool = false, date: Date = Date(), checked: Bool = false) {
         self.init()
         self.taskID = id ?? UUID().uuidString
         self.name = name
         self.shortDescription = description
         self.priority = priority
+        self.shouldRemind = shouldRemind
+        self.date = getRemindDate(from: date)
+        self.checked = checked
     }
 }

@@ -28,7 +28,7 @@ class TasksDataStore {
     }
 
     func add(task: Task) {
-
+        print(task.description)
         do {
             try realm.write {
                 realm.add(task, update: .modified)

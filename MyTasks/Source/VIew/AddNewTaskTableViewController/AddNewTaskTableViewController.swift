@@ -26,6 +26,11 @@ class AddNewTaskViewController: UITableViewController {
             actionButton.setupViews(cornerRadius: 8)
         }
     }
+    @IBOutlet weak var shouldRemindSwitch: UISwitch!
+    @IBOutlet weak var dueDateLabel: UILabel!
+    @IBOutlet weak var datePickerCell: UITableViewCell!
+    @IBOutlet weak var datePicker: UIDatePicker!
+    private var datePickerVisible = false
 
     private var viewModel: AddNewTaskViewModel!
     private let bag = DisposeBag()
@@ -33,10 +38,10 @@ class AddNewTaskViewController: UITableViewController {
     // MARK: - Methods
 
     static func create(with viewModel: AddNewTaskViewModel) -> AddNewTaskViewController {
-         let controller = AddNewTaskViewController.getInstance() as! AddNewTaskViewController
-         controller.viewModel = viewModel
-         return controller
-     }
+        let controller = AddNewTaskViewController.getInstance() as! AddNewTaskViewController
+        controller.viewModel = viewModel
+        return controller
+    }
 
 
     override func viewDidLoad() {
@@ -44,14 +49,14 @@ class AddNewTaskViewController: UITableViewController {
         
         setupViews(with: viewModel)
         bindTextFields(to: viewModel)
-        bindButton(to: viewModel)
+        bindControls(to: viewModel)
 
 
         viewModel.isEditing.subscribe(onNext: { [weak self] status in
             let title = status ? "ИЗМЕНИТЬ" : "СОЗДАТЬ"
             self?.actionButton.setTitle(title, for: .normal)
-        }, onCompleted: { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
+            }, onCompleted: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
         }).disposed(by: bag)
 
     }
@@ -69,6 +74,16 @@ class AddNewTaskViewController: UITableViewController {
         descriptionTextView.placeholder = "Введите текст"
         priorityButtons.forEach({ $0.setTitle("", for: .normal) })
         priorityButtons.first(where: { $0.tag == viewModel.prioritySubject.value.rawValue })?.setTitle("✓", for: .normal)
+        viewModel.dateSubject
+            .map({ (date) -> String in
+                let remindDate = getRemindDate(from: date)
+                return createStringFromDate(remindDate)
+            }).subscribe(onNext: { [weak self] dateStr in
+                self?.dueDateLabel.text = dateStr
+            }).disposed(by: bag)
+        shouldRemindSwitch.isOn = viewModel.shoudRemind.value
+        datePicker.date = viewModel.dateSubject.value
+
     }
 
     private func bindTextFields(to viewModel: AddNewTaskViewModel) {
@@ -76,13 +91,15 @@ class AddNewTaskViewController: UITableViewController {
         descriptionTextView.rx.text.orEmpty.bind(to: viewModel.descriptionSubject).disposed(by: bag)
     }
 
-    private func bindButton(to viewModel: AddNewTaskViewModel) {
+    private func bindControls(to viewModel: AddNewTaskViewModel) {
         viewModel.actionButtonIsEnabled.subscribe(onNext: { [weak self] status in
             self?.actionButton.isEnabled = status
-            }).disposed(by: bag)
+        }).disposed(by: bag)
         actionButton.rx.tap.subscribe(onNext: { _ in
             viewModel.save()
-            }).disposed(by: bag)
+        }).disposed(by: bag)
+        shouldRemindSwitch.rx.isOn.bind(to: viewModel.shoudRemind).disposed(by: bag)
+        datePicker.rx.date.bind(to: viewModel.dateSubject).disposed(by: bag)
     }
 
     @IBAction func prioritySelected(_ sender: UIButton) {
@@ -95,26 +112,103 @@ class AddNewTaskViewController: UITableViewController {
         self.navigationController?.popViewController(animated: true)
     }
 
+    @IBAction func shouldRemindAction(_ sender: UISwitch) {
+        nameTextField.resignFirstResponder()
+        descriptionTextView.resignFirstResponder()
+        if shouldRemindSwitch.isOn {
+            DispatchQueue.main.async {
+                let center = UNUserNotificationCenter.current()
+                center.requestAuthorization(options: [.alert, .sound]) {
+                    granted, error in
+                }
+            }
+        }
+    }
+
+    private func showDatePicker(){
+        datePickerVisible = true
+        tableView.insertRows(at: [IndexPath(row: 5, section: 0)], with: .fade)
+        datePicker.date = viewModel.dateSubject.value
+    }
+
+    private func hideDateCell(){
+        if datePickerVisible {
+            datePickerVisible = false
+            tableView.beginUpdates()
+            tableView.deleteRows(at: [IndexPath(row: 5, section: 0)], with: .fade)
+            tableView.endUpdates()
+        }
+    }
+
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        if section == 0 && datePickerVisible {
+            return 6
+        } else {
+            return super.tableView(tableView,
+                                   numberOfRowsInSection: section)
+        }
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.row == 1 {
-            return descriptionTextView.text.heightWithConstrainedWidth(width: tableView.frame.width - 32, font: UIFont.systemFont(ofSize: 14)) + 30
+        if indexPath.section == 0 {
+            if indexPath.row == 1 {
+                return descriptionTextView.text.heightWithConstrainedWidth(width: tableView.frame.width - 32, font: UIFont.systemFont(ofSize: 14)) + 30
+            } else if indexPath.row == 5 {
+                return 217
+            }
         }
+
         return super.tableView(tableView, heightForRowAt: indexPath)
+
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        if indexPath.row == 5 && indexPath.section == 0 {
+            return datePickerCell
+        }
+        return super.tableView(tableView, cellForRowAt: indexPath)
+
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        nameTextField.resignFirstResponder()
+        descriptionTextView.resignFirstResponder()
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.row == 4 && indexPath.section == 0 {
+            datePickerVisible ? hideDateCell() : showDatePicker()
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        if indexPath.row == 4 && indexPath.section == 0 {
+            return indexPath
+        }
+        return nil
+    }
+
+    override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+        var newIndexPath = indexPath
+        if (indexPath.row == 5 && indexPath.section == 0) {
+            newIndexPath = IndexPath(row: 0, section: indexPath.section)
+        }
+        return super.tableView(tableView, indentationLevelForRowAt: newIndexPath)
     }
 
 }
 
 extension AddNewTaskViewController: UITextFieldDelegate {
+
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        hideDateCell()
+        return true
+    }
 
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
@@ -134,6 +228,11 @@ extension AddNewTaskViewController: UITextFieldDelegate {
 }
 
 extension AddNewTaskViewController: UITextViewDelegate {
+
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        hideDateCell()
+        return true
+    }
 
     func textViewDidChange(_ textView: UITextView) {
         textView.changePlaceholderVisibility()

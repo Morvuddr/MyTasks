@@ -16,9 +16,12 @@ class AddNewTaskViewModel {
     public let descriptionSubject = BehaviorRelay<String>(value: "")
     public let prioritySubject = BehaviorRelay<TaskPriority>(value: .low)
     public let actionButtonIsEnabled = BehaviorRelay<Bool>(value: false)
+    public let shoudRemind = BehaviorRelay<Bool>(value: false)
+    public let dateSubject = BehaviorRelay<Date>(value: Date())
     public let isEditing = BehaviorSubject<Bool>(value: false)
 
     private var taskID: String? = nil
+    private var taskIsChecked: Bool = false
     private let dataStore: TasksDataStore
     private let bag = DisposeBag()
 
@@ -33,6 +36,9 @@ class AddNewTaskViewModel {
             nameSubject.accept(task.name)
             descriptionSubject.accept(task.shortDescription)
             prioritySubject.accept(task.priority)
+            shoudRemind.accept(task.shouldRemind)
+            dateSubject.accept(task.date)
+            taskIsChecked = task.checked
             isEditing.onNext(true)
         }
         
@@ -51,7 +57,10 @@ class AddNewTaskViewModel {
         let newTask = Task(id: taskID,
                            name: nameSubject.value.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines),
                            description: descriptionSubject.value.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines),
-                           priority: prioritySubject.value)
+                           priority: prioritySubject.value,
+                           shouldRemind: shoudRemind.value,
+                           date: dateSubject.value,
+                           checked: taskIsChecked)
         dataStore.add(task: newTask)
         isEditing.onCompleted()
     }
